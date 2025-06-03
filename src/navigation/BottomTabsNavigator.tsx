@@ -19,8 +19,6 @@ export default function BottomTabsNavigator() {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Search') {
             iconName = focused ? 'search' : 'search-outline';
-          } else if (route.name === 'Add') {
-            iconName = focused ? 'add' : 'add-outline';
           }
 
           return <Icon name={iconName} size={30} color={color} />;
@@ -48,11 +46,6 @@ export default function BottomTabsNavigator() {
       <Tab.Screen
         name="Search"
         component={SearchScreen}
-        options={{ headerShown: false }}
-      />
-      <Tab.Screen
-        name="Add"
-        component={SubmitScreen}
         options={{ headerShown: false }}
       />
     </Tab.Navigator>

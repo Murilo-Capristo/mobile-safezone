@@ -44,19 +44,23 @@ const handleLogin = async () => {
 return(
     <View style={styles.container}>
         <View style={{ width: '100%', alignItems: 'center',justifyContent: 'center', flexDirection: 'row'}}>
-<View>
-                        
-        </View>
-
-    
-        <View style={styles.logoContainer}>
+            <View>
+                    <TouchableOpacity>
+                        <Icon
+                name="arrow-back-outline"
+                size={30}
+                color={laranja}
+                style={{ marginTop: 30, marginLeft: 10 }}
+                onPress={() => navigation.popToTop()}/>
+                    </TouchableOpacity>  
+            </View>
+            <View style={styles.logoContainer}>
             <Image
                 source={require("../../../assets/Vector.png")} 
                 style={styles.logo}
                 resizeMode="contain"
             />
-        </View>
-
+            </View>
         </View>
 
             
@@ -142,7 +146,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         borderColor: "#606060",
-        borderWidth: 1,
+        borderWidth: 2,
         width: "100%",
         height: 50,
         backgroundColor: "#EEEEEE",

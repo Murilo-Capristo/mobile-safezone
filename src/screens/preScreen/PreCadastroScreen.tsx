@@ -34,7 +34,7 @@ export default function PreCadastro() {
                 size={30}
                 color={laranja_escuro}
                 style={{ marginTop: 30, marginLeft: 10 }}
-                onPress={() => navigation.goBack()}/>
+                onPress={() => navigation.popToTop()}/>
             </TouchableOpacity>
           </View>
           <View style={styles.logoContainer}>

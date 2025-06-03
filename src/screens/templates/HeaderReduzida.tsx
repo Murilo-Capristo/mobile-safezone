@@ -66,8 +66,7 @@ const styles = StyleSheet.create({
     },
     header:{
         backgroundColor: "#fff",
-        borderBottomColor: roxo,
-        borderBottomWidth: 20,
+
     },
     TextProfile:{
         fontSize: 17,  

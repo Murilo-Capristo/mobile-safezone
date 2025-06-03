@@ -1,112 +1,120 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
-import IconFont from "react-native-vector-icons/Fontisto";
-import MCI from "react-native-vector-icons/MaterialCommunityIcons";
-import Feather from "react-native-vector-icons/Feather";
+import { View, Text, StyleSheet, ActivityIndicator, FlatList } from "react-native";
 import HeaderTemplate from "../templates/HeaderTemplate";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/RootNavigator";
+import React, { useEffect, useState } from "react"; 
 
-
-import { JSX } from "react";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'HomeScreen'>;
 
 
-const roxo = '#f900cf';
-const roxo_escuro = "#9F0095";
+const laranja_escuro = '#AD5900';
+const laranja = "#FC8910";
+const laranja2 = "#ff5100";
 
-const featureCards = [
-    {
-        title: "Motos",
-        navegacao: "SearchScreen",
-        param: "motos",
-        icon: <IconFont name="motorcycle" size={50} color={roxo_escuro} />,
-      },
-      {
-        title: "Cadastrar Moto",
-        navegacao: "CadastroMoto",
-        param: "motos",
-        icon: <Feather name="plus-square" size={50} color={roxo_escuro} />, 
-      },
-      {
-        title: "Setores",
-        navegacao: "SearchScreen",
-        param: "setores",
-        icon: <MCI name="garage" size={50} color={roxo_escuro} />, 
-      },
-      {
-        title: "Cadastrar Setor",
-        navegacao: "CadastroSetor",
-        param: "setores",
-        icon: <Feather name="plus-square" size={50} color={roxo_escuro} />, 
-      },
-];
+type Breed = {
+  id: string;
+  name: string;
+  maleWeightMax: number;
+  hypoallergenic: boolean;
+}
+
+
 export default function HomeScreen() {
-      const navigation = useNavigation<HomeScreenNavigationProp>();
-    return (
-        <View style={{ flex: 1, backgroundColor: "#fff" }}>
-            <HeaderTemplate></HeaderTemplate>
-            <View style={styles.subtitle}>
-                <Text>Garagem 100% digital</Text>
-            </View>
-            <View style={styles.container}>
-                {featureCards.map((card, index) => (
-                    <TouchableOpacity key={index} style={styles.card}
-                        onPress={() => {
-                            navigation.navigate(card.navegacao, { param: card.param });
-                        }
-                    }>
-                        <View style={styles.iconContainer}>{card.icon}</View>
-                        <Text style={styles.cardTitle}>{card.title}</Text>
-                    </TouchableOpacity>
-                    
-                ))}
-        </View>
+  const [breeds, setBreeds] = useState<Breed[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+  useEffect(() => {
+    fetch('https://dogapi.dog/api/v2/breeds')
+    .then((response) => response.json())
+    .then((json) => {
+      const parsed: Breed[] = json.data.map((breed: any) => ({
+        id: breed.id,
+        name: breed.attributes.name,
+        maleWeightMax: breed.attributes.male_weight.max,
+        hypoallergenic: breed.attributes.hypoallergenic,
+    }));
+      setBreeds(parsed);
+
+    })
+    .catch((error) => console.error("Erro ao Buscar na API", error))
+    .finally(() => setLoading(false));
+  }, []);
+  
+  return (
+      <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <HeaderTemplate></HeaderTemplate>
+
+        <View style={styles.container}>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.subtitle, { color: '#000' }]}>Últimos</Text>
+            <Text style={[styles.subtitle, { color: laranja2 }]}> Alertas</Text>
+          </View>
+
+          {loading ? (
+          <ActivityIndicator size="large" color={laranja2} />
+        ) : (
+          <FlatList
+            data={breeds}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>{item.name}</Text>
+                <Text>Peso máx. macho: {item.maleWeightMax} kg</Text>
+                <Text>
+                  Hipoalergênico: {item.hypoallergenic ? "Sim" : "Não"}
+                </Text>
+              </View>
+            )}
+          />
+        )}
         </View>
         
- );
+      </View>
+    );
  }   
         
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
+
         alignItems: "center",
-        backgroundColor: "#fff",
-        flexDirection: "row",
-        flexWrap: "wrap",
+        backgroundColor: "#d8d8d8",
+ 
+
+        marginTop: 20,
+        marginHorizontal: 20,
+        borderRadius: 10,
     },
     subtitle: {
-        marginLeft:30,
-        marginTop: 30,
-        marginBottom: 30,
+
+
         textAlign: "center",
+        fontSize: 35,
         
 
     },
     card: {
-      padding:20,
-      justifyContent: "space-between",
-      margin: 20,
+      padding: 20,
+      marginVertical: 10, 
       borderRadius: 10,
       backgroundColor: "#F3E8FF", 
-      width: 150,
-      height: 150,
+      width: "100%", 
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.2,
       shadowRadius: 4,
       elevation: 5,
     },
+    
     iconContainer: {
         height: 60, 
         justifyContent: "center", 
       },
     cardTitle: {
-        marginTop: 10,
+
       fontSize: 20,
       fontWeight: "bold",
       color: "#000",

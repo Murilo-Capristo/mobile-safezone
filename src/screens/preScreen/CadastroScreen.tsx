@@ -9,8 +9,8 @@ import Modal from "react-native-modal";
 import { useState } from "react";
 
 
-const roxo = '#f900cf';
-const roxo_escuro = "#9F0095";
+const laranja_escuro = '#AD5900';
+const laranja = "#FC8910";
 const { width, height } = Dimensions.get('window');
 
 type CadastroScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Cadastro'>;
@@ -30,24 +30,24 @@ export default function Cadastro() {
     const navigation = useNavigation<CadastroScreenNavigationProp>();
 return(
     <View  style={styles.container}>
-
-
-        <View>
-        <TouchableOpacity>
-              <Icon
+        <View style={{ width: '100%', alignItems: 'center',justifyContent: 'center', flexDirection: 'row'}}>
+            <View>
+                    <TouchableOpacity>
+                        <Icon
                 name="arrow-back-outline"
                 size={30}
-                color={"white"}
+                color={laranja}
                 style={{ marginTop: 30, marginLeft: 10 }}
-                onPress={() => navigation.goBack()}/>
-            </TouchableOpacity>
+                onPress={() => navigation.popToTop()}/>
+                    </TouchableOpacity>  
+            </View>
             <View style={styles.logoContainer}>
             <Image
                 source={require("../../../assets/Vector.png")} 
                 style={styles.logo}
                 resizeMode="contain"
             />
-        </View>
+            </View>
         </View>
         
         <Text style={{color:'#fff', fontSize:30, fontWeight:"300"}}>
@@ -55,32 +55,21 @@ return(
         </Text>
 
         <View style={styles.formulario}>
-  
-                  {/* Campo nome */}  
-        <View style={styles.inputContainer}>
-                <Icon name="person" size={20} color={"#fff"}></Icon>
-                <TextInput
-                placeholder="Nome"
-                placeholderTextColor="#ccc"
-                style={styles.input}
-                />
-            </View>
-
-                {/* Campo email */}
+              {/* Campo email */}
             <View style={styles.inputContainer}>
-                <Icon name="mail-outline" size={20} color={"#fff"}></Icon>
+                <Icon name="mail-outline" size={20} color={"#000"}></Icon>
                 <TextInput
                 placeholder="Email"
-                placeholderTextColor="#ccc"
+                placeholderTextColor="#888888"
                 style={styles.input}
                 />
             </View>
                 {/* Campo senha */}
                 <View style={styles.inputContainer}>
-                <Icon name="lock-closed" size={20} color={"#fff"}></Icon>
+                <Icon name="lock-closed" size={20} color={"#---"}></Icon>
                 <TextInput
                 placeholder="Senha"
-                placeholderTextColor="#ccc"
+                placeholderTextColor="#888888"
                 style={styles.input}
             
                 />
@@ -116,66 +105,76 @@ return(
 
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    
 
-    },
-    logoContainer: {
-        alignItems: "flex-start",
-        // marginBottom: 20,
-        marginTop: 90,
-    },
-    logo: {
-        width: 300,
-        height: 100,
-        
-    },
-    input: {
-        flex: 1,
-        fontSize: 18, 
-        color: "#fff",
-      },
-    inputContainer: {
+},
+logoContainer: {
+    alignItems: "flex-start",
+    // marginBottom: 20,
+    marginTop: 90,
+},
+logo: {
+    width: 300,
+    height: 100,
+    
+},
+input: {
+    flex: 1,
+    fontSize: 18, 
+    color: "#000",
+  },
+inputContainer: {
 
-        flexDirection: "row",
-        alignItems: "center",
-        borderBottomColor: "#fff",
-        borderBottomWidth: 1,
-        width: "80%",        
-    },
+    flexDirection: "row",
+    paddingHorizontal: 10,
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderColor: "#606060",
+    borderWidth: 2,
+    width: "100%",
+    height: 50,
+    backgroundColor: "#EEEEEE",
+    borderRadius: 10,        
+},
 
 
 
-    formulario:{
-        width:'70%',
-        height:'30%',
-        borderRadius:20,
-        paddingBottom: 40,
-        
+formulario:{
+    width:'70%',
+    height:'40%',
+    borderRadius:20,
+    paddingBottom: 100,
 
-        // marginTop:200,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        // marginBottom:40,
-    },
-    textButton:{
-        color:'#000',
-        fontSize:20,
-        fontWeight:'semibold',
-    },
-    button: {
-        backgroundColor: "#fff",
-        borderRadius: 10,
-        paddingVertical: 16,
-        paddingHorizontal: '20%',
-        alignItems: "center",
-        marginBottom: 90,
-        // marginTop: 20,
-        width:'80%',
-    },
+
+    // marginTop:200,
+    justifyContent: "space-evenly",
+    alignItems: 'center',
+    // marginBottom:40,
+},
+textButton:{
+    color:'#000',
+    fontSize:20,
+    fontWeight:'semibold',
+},
+button: {
+    backgroundColor: laranja,
+    borderRadius: 10,
+    paddingVertical: 16,
+    paddingHorizontal: '20%',
+    alignItems: "center",
+    marginBottom: 310,
+    width:'80%',
+},
+buttonGoBack: {
+
+    position: 'absolute',
+    top: 0,
+    left: 0,
+},
     
   modal: {
     justifyContent: "flex-start", 

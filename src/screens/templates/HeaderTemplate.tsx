@@ -40,9 +40,8 @@ export default function HeaderTemplate() {
                 style={styles.logo} />
                 </View>
             </View>
-            <View style={styles.title}>
-                <Text style={styles.textTitle}> Controle total em tempo real.</Text>
-            </View>
+                <View style={styles.title}>
+                </View>
             </View>
         </View>
     )
@@ -50,7 +49,7 @@ export default function HeaderTemplate() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "#fff",
     },
@@ -77,8 +76,7 @@ const styles = StyleSheet.create({
     },
     header:{
         backgroundColor: "#fff",
-        borderBottomColor: roxo,
-        borderBottomWidth: 20,
+
     },
     TextProfile:{
         fontSize: 17,  
@@ -95,8 +93,7 @@ const styles = StyleSheet.create({
     },
     logo:{
         width: 120,
-        resizeMode: "contain",
-        height: 45,
+        height: 55,
 
     },
 });
