@@ -6,11 +6,7 @@ import Login from "../screens/preScreen/LoginScreen";
 import Cadastro from "../screens/preScreen/CadastroScreen";
 import HomeScreen from "../screens/appScreens/HomeScreen";
 import BottomTabsNavigator from "./BottomTabsNavigator";
-import SearchScreen from "../screens/appScreens/SearchScreen";
-import SubmitScreen from "../screens/appScreens/SubmitScreen";
-import CadastroMoto from "../screens/appScreens/CadastroMoto";
-import CadastroSetor from "../screens/appScreens/CadastroSetor";
-import FormMoto from "../screens/appScreens/FormMoto";
+import Users from "../screens/appScreens/Users";
 import Splash from "../screens/Splash";
 
 
@@ -21,11 +17,8 @@ export type RootStackParamList = {
     Login: undefined;
     Cadastro: undefined;
     HomeScreen: undefined;
-    SearchScreen: {param: string};
-    SubmitScreen: {param:string};
-    CadastroMoto: undefined;
-    CadastroSetor: undefined;
-    FormMoto: undefined;
+    Users: undefined;
+
   };
   
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -39,22 +32,14 @@ export type RootStackParamList = {
           <Stack.Screen name="PreCadastro" component={PreCadastro} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Cadastro" component={Cadastro} />
-          <Stack.Screen name="CadastroMoto" component={CadastroMoto} />
-          <Stack.Screen name="CadastroSetor" component={CadastroSetor} />
-          <Stack.Screen name="FormMoto" component={FormMoto} />
-
 
           <Stack.Screen 
           name="HomeScreen" 
           component={BottomTabsNavigator} 
           options={{headerShown: false}} /> 
           <Stack.Screen 
-          name="SearchScreen" 
-          component={SearchScreen} 
-          options={{headerShown: false}} />
-          <Stack.Screen 
-          name="SubmitScreen" 
-          component={SubmitScreen} 
+          name="Users" 
+          component={Users} 
           options={{headerShown: false}} />
         </Stack.Navigator>
       </NavigationContainer>

@@ -1,40 +1,53 @@
 
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/AntDesign";
+import IconFeather from "react-native-vector-icons/Feather";
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from "../screens/appScreens/HomeScreen";
 import SubmitScreen from "../screens/appScreens/SubmitScreen";
-import SearchScreen from "../screens/appScreens/SearchScreen";
+import SearchScreen from "../screens/appScreens/Users";
 
 const Tab = createBottomTabNavigator();
-
+const laranja_escuro = '#AD5900';
+const laranja = "#FC8910";
+const vermelho = "#AF0000"
 export default function BottomTabsNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color }) => {
-          let iconName: string = '';
-
           if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
+            return (
+              <Icon
+                name="home"
+                size={32}
+                color={color}
+                style={{ marginBottom: -4 }}
+              />
+            );
           } else if (route.name === 'Search') {
-            iconName = focused ? 'search' : 'search-outline';
-          }
-
-          return <Icon name={iconName} size={30} color={color} />;
-        },
-        tabBarActiveTintColor: '#f900cf',
-        tabBarInactiveTintColor: 'gray',
+            return (
+              <IconFeather
+                name="users"
+                size={32}
+                color={color}
+                style={{ marginBottom: -4 }}
+              />
+            );
+          }},
+        tabBarActiveTintColor: vermelho,
+        tabBarInactiveTintColor: 'white',
         tabBarStyle: {
           backgroundColor: '#DCDEDF',
           height: 70, 
         },
         tabBarItemStyle: {
-            height: 80,
+            backgroundColor: laranja,
+            height: 70,
             paddingTop: 10,
             paddingBottom: 10,
           },
-          
+
         tabBarShowLabel: false,
       })}
     >

@@ -47,7 +47,7 @@ export default function HomeScreen() {
         <HeaderTemplate></HeaderTemplate>
 
         <View style={styles.container}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={[{flexDirection: 'row', margin:20}]}>
             <Text style={[styles.subtitle, { color: '#000' }]}>Últimos</Text>
             <Text style={[styles.subtitle, { color: laranja2 }]}> Alertas</Text>
           </View>
@@ -79,11 +79,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-
         alignItems: "center",
         backgroundColor: "#d8d8d8",
- 
-
         marginTop: 20,
         marginHorizontal: 20,
         borderRadius: 10,
@@ -100,7 +97,7 @@ const styles = StyleSheet.create({
       padding: 20,
       marginVertical: 10, 
       borderRadius: 10,
-      backgroundColor: "#F3E8FF", 
+      backgroundColor: "#b8b8b8", 
       width: "100%", 
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },

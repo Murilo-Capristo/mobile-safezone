@@ -5,7 +5,7 @@ import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from "rea
 import { TextInput } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/Ionicons";
 import { RootStackParamList } from "../../navigation/RootNavigator";
-import Modal from "react-native-modal";
+
 import { useState } from "react";
 import { useAuth, useUser } from "../contexts/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
