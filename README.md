@@ -1,4 +1,4 @@
- ### 🛡️ SafeZone
+ ## 🛡️ SafeZone
 > Sistema inteligente para monitoramento ambiental e alertas de segurança com integração de sensores IoT via MQTT, API REST segura e painel de controle para gestão de dados em tempo real.
 
 ---
