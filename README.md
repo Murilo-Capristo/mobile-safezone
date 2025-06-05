@@ -1,6 +1,5 @@
-# 🏍️ OndeTáMoto
-
-> Um sistema inteligente para **detecção e cadastro de motocicletas** via RFID, utilizando um app mobile com integração Bluetooth. Ideal para controle de acesso, segurança e rastreamento em estacionamentos e garagens.
+🛡️ SafeZone
+> Sistema inteligente para monitoramento ambiental e alertas de segurança com integração de sensores IoT via MQTT, API REST segura e painel de controle para gestão de dados em tempo real.
 
 ---
 
