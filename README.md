@@ -1,67 +1,75 @@
- ## 🛡️ SafeZone
-> Sistema inteligente para monitoramento ambiental e alertas de segurança com integração de sensores IoT via MQTT, API REST segura e painel de controle para gestão de dados em tempo real.
+# 🛡️ SafeZone
+
+> Sistema para monitoramento ambiental com integração MQTT e API REST, coletando dados de sensores e enviando alertas.
 
 ---
 
 ## 🧑‍💻 Integrantes do Grupo
-- Guilherme Romanholi Santos - RM557462
-- Murilo Capristo - RM556794
-- Nicolas Guinante Cavalcanti - RM557844
-  
+- Guilherme Romanholi Santos - RM557462  
+- Murilo Capristo - RM556794  
+- Nicolas Guinante Cavalcanti - RM557844  
+
 ---
 
 ## 🚀 Como Rodar o Projeto?
-- git clone https://github.com/Murilo-Capristo/mobile-ondetamoto.git
-- cd mobile-ondetamoto
-- npm i
-- npx expo start
-  
+
+### Backend
+- Clone o repositório do backend (exemplo):  
+  `git clone https://github.com/Murilo-Capristo/mobile-safezone.git`  
+- Acesse a pasta do backend:  
+  `cd safezone-backend`  
+- Rode o projeto Spring Boot (com Java 17+):  
+  `./mvnw spring-boot:run` ou pelo seu IDE favorito  
+- API disponível em: `http://localhost:8081`
+
+### Frontend
+- Clone o repositório do app mobile (exemplo):  
+  `git clone https://github.com/seuusuario/safezone-app.git`  
+- Acesse a pasta do frontend:  
+  `cd safezone-app`  
+- Instale dependências:  
+  `npm install`  
+- Inicie o app com Expo:  
+  `npx expo start`  
+- Abra no seu emulador ou dispositivo físico pelo QR code gerado
+
 ---
 
-## 📱 Sobre o Projeto
+## 📱 Frontend (App Mobile)
 
-O **OndeTáMoto** é uma solução web e mobile integrada, que permite identificar ou registrar motocicletas por meio de **tags RFID** e um **leitor Bluetooth externo**, sem necessidade de hardware fixo na moto.
+- Desenvolvido com **React Native** usando **Expo** para facilitar o desenvolvimento e testes rápidos  
+- Consome a API REST para autenticação e exibição dos dados de sensores e alertas  
+- Interface simples para visualização das leituras em tempo real e histórico  
+- Simulação da leitura de sensores via mock, com plano para integração futura com dispositivos Bluetooth ou leitores RFID  
+- Navegação gerenciada pelo **React Navigation** (Stack)  
+- Comunicação HTTP feita com **Axios**  
+- Estado global gerenciado por **Context API**
 
-- 📲 App desenvolvido em **React Native**
-- 🌐 Backend em **Spring Boot**
-- 💡 Ideal para sistemas de garagem, estacionamento ou rastreamento inteligente
-- 🛰️ Conexão automática com o leitor Bluetooth ao se aproximar de uma moto com tag RFID
+---
+
+## 🔧 Backend (API)
+
+- Construído com **Spring Boot**  
+- Endpoints REST para login, envio de leituras e alertas  
+- Integração com broker MQTT para receber dados de sensores ESP32  
+- Banco de dados H2 para desenvolvimento e testes  
+- Segurança via JWT para autenticação e autorização  
 
 ---
 
 ## ⚙️ Tecnologias Utilizadas
 
-### 🔹 Mobile (React Native)
-- React Navigation (Stack)
-- Axios
-- Context API
-- Bluetooth Serial (simulação ainda indisponível)
-
-### 🔹 Outros
-- RFID tags (ainda não simuláveis no app)
-- Leitor RFID Bluetooth (ainda não simulado em desenvolvimento)
+- **Backend:** Java 17, Spring Boot, Spring Security, JWT, H2 Database  
+- **Frontend:** React Native + Expo, React Navigation, Axios, Context API  
+- **Comunicação:** MQTT (Mosquitto), HTTP REST API  
+- **Hardware:** ESP32 com sensores ambientais (simulação e integração futura)  
 
 ---
 
 ## 🧩 Funcionalidades
 
-- 📍 Detectar moto por aproximação do leitor RFID
-- ➕ Cadastrar nova moto ao detectar uma tag desconhecida
-- 👤 Login por nome de usuário 
-- 📊 Listar e avaliar estabelecimentos
-- 🔐 Segurança com JWT
-
----
-
-#Próximos Passos:
-## 🧪 Simulação sem Hardware
-
-Para testes sem o leitor Bluetooth real:
-- Simule a leitura de tags RFID com dados mockados
-- Utilize uma tela especial de "Simulação de Leitura"
-- O app identifica como se a tag tivesse sido lida via Bluetooth
-
----
-
-
-
+- Autenticação via API REST  
+- Recebimento e cadastro automático de leituras de sensores via MQTT  
+- Envio de alertas para API REST para registro e monitoramento  
+- App mobile para visualização em tempo real e histórico das leituras  
+- Simulação de leitura para testes sem hardware real  
