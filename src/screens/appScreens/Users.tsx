@@ -1,143 +1,176 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from "react-native";
-import { Provider } from "react-native-paper";
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import HeaderTemplate from "../templates/HeaderTemplate";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { RootStackParamList } from "../../navigation/RootNavigator";
-import { Breed } from "../../types/Alerta"; 
-import { useAuth } from '../contexts/UserContext';
+import { useNavigation } from "@react-navigation/native";
 
-
-
-
-type SearchScreenRouteProp = RouteProp<RootStackParamList, "SearchScreen">;
+interface Usuario {
+  id: number;
+  email: string;
+  role: string;
+}
 
 const laranja = "#FC8910";
 
 export default function SearchScreen() {
   const navigation = useNavigation();
-  const route = useRoute<SearchScreenRouteProp>();
-  const [search, setSearch] = useState("");
-  const [breeds, setBreeds] = useState<Breed[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  const buscarUsuarios = async () => {
+    try {
+      const response = await fetch("http://52.168.182.169:8081/usuario");
+      const data = await response.json();
+
+      const filtrados = data.filter(
+        (u: any) => u.email.toLowerCase() !== "murilocapristo"
+      );
+
+      setUsuarios(
+        filtrados.map((u: any) => ({
+          id: u.id,
+          email: u.email,
+          role: u.role,
+        }))
+      );
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const buscarRacas = async () => {
-      try {
-        const response = await fetch('https://dogapi.dog/api/v2/breeds');
-        const json = await response.json();
-        const racasFormatadas: Breed[] = json.data.map((item: any) => ({
-          id: item.id,
-          name: item.attributes.name,
-          maleWeightMax: item.attributes.male_weight?.max ?? 0,
-          hypoallergenic: item.attributes.hypoallergenic,
-        }));
-        setBreeds(racasFormatadas);
-      } catch (error) {
-        console.error('Erro ao buscar raças:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    buscarRacas();
+    buscarUsuarios();
   }, []);
 
-  const racasFiltradas = breeds.filter((raca) =>
-    raca.name.toLowerCase().includes(search.toLowerCase())
+  const atualizarUsuario = async (id: number, email: string, role: string) => {
+    try {
+      await fetch(`http://52.168.182.169:8081/usuario/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, role }),
+      });
+      buscarUsuarios();
+    } catch (err) {
+      console.error("Erro ao atualizar usuário:", err);
+    }
+  };
+
+  const excluirUsuario = async (id: number) => {
+    Alert.alert("Confirmação", "Deseja realmente excluir este usuário?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Excluir",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await fetch(`http://52.168.182.169:8081/usuario/${id}`, {
+              method: "DELETE",
+            });
+            buscarUsuarios();
+          } catch (err) {
+            console.error("Erro ao excluir usuário:", err);
+          }
+        },
+      },
+    ]);
+  };
+
+  const usuariosFiltrados = usuarios.filter((u) =>
+    u.email.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <Provider>
+    <View style={styles.container}>
       <HeaderTemplate />
-      <View style={styles.container}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
-          <Icon name="arrow-back" size={28} color={laranja} />
-        </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
+        <Icon name="arrow-back" size={28} color={laranja} />
+      </TouchableOpacity>
 
-        <View style={styles.searchRow}>
-          <TextInput
-            style={styles.input}
-            placeholder="Pesquise aqui..."
-            value={search}
-            onChangeText={setSearch}
-          />
-          <TouchableOpacity style={styles.filterButton}>
-            <AntDesign name="search1" size={30} color="#000" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.container2}>
-          <Text style={{ fontSize: 30, marginBottom: 10 }}>Resultados</Text>
-          <FlatList
-            data={racasFiltradas}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.resultadoItem}>
-                <Text style={styles.resultadoTitulo}>{item.name}</Text>
-                <Text>Peso máx. macho: {item.maleWeightMax} kg</Text>
-                <Text>Hipoalergênico: {item.hypoallergenic ? "Sim" : "Não"}</Text>
-              </View>
-            )}
-          />
-        </View>
+      <View style={styles.searchRow}>
+        <TextInput
+          style={styles.input}
+          placeholder="Buscar usuário..."
+          value={search}
+          onChangeText={setSearch}
+        />
+        <AntDesign name="search1" size={26} style={{ marginRight: 10 }} />
       </View>
-    </Provider>
+
+      <FlatList
+        data={usuariosFiltrados}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.usuarioItem}>
+            <Text>ID: {item.id}</Text>
+            <TextInput
+              style={styles.editInput}
+              value={item.email}
+              onChangeText={(text) =>
+                setUsuarios((prev) =>
+                  prev.map((u) => (u.id === item.id ? { ...u, email: text } : u))
+                )
+              }
+            />
+            <TextInput
+              style={styles.editInput}
+              value={item.role}
+              onChangeText={(text) =>
+                setUsuarios((prev) =>
+                  prev.map((u) => (u.id === item.id ? { ...u, role: text } : u))
+                )
+              }
+            />
+            <View style={styles.actions}>
+              <TouchableOpacity onPress={() => atualizarUsuario(item.id, item.email, item.role)}>
+                <AntDesign name="checkcircle" size={24} color="green" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => excluirUsuario(item.id)} style={{ marginLeft: 10 }}>
+                <AntDesign name="delete" size={24} color="red" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: "#fff",
-    flex: 1,
-  },
-  container2: {
-    flex: 1,
-    padding: 16,
-    marginTop: 20,
-    borderRadius: 10,
-    backgroundColor: "#d8d8d8",
-  },
+  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
+  voltarBtn: { position: "absolute", top: 10, left: 10, zIndex: 1 },
   searchRow: {
     flexDirection: "row",
-    alignItems: "center",
+    borderWidth: 1,
     borderColor: "#ccc",
-    borderWidth: 2,
     borderRadius: 10,
-    marginTop: 50,
+    alignItems: "center",
+    paddingHorizontal: 10,
+    marginTop: 60,
   },
   input: {
     flex: 1,
-    paddingHorizontal: 10,
     height: 40,
-    fontSize: 16,
   },
-  filterButton: {
-    marginLeft: 10,
-    backgroundColor: "#fff",
-    padding: 8,
-    borderRadius: 8,
-  },
-  voltarBtn: {
-    position: "absolute",
-    top: 10,
-    left: 10,
-    zIndex: 1,
-  },
-  resultadoItem: {
+  usuarioItem: {
+    backgroundColor: "#eee",
+    borderRadius: 10,
     padding: 10,
-    marginBottom: 10,
-    backgroundColor: "#f4f4f4",
-    borderRadius: 8,
+    marginVertical: 5,
+  },
+  editInput: {
+    backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#ccc",
+    borderRadius: 6,
+    padding: 6,
+    marginVertical: 4,
   },
-  resultadoTitulo: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 4,
+  actions: {
+    flexDirection: "row",
+    marginTop: 6,
   },
 });

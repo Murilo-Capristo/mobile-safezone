@@ -3,4 +3,5 @@ export interface Alerta {
     tipo: string;
     descricao: string; 
     dataHora: string;
+    leituraId: string; 
   }
