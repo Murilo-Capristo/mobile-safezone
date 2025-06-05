@@ -6,18 +6,6 @@ import { AuthProvider } from "./src/screens/contexts/UserContext";
 import { Text, View } from "react-native";
 
 export default function App() {
-  useEffect(() => {
-    const clearDetectedMotos = async () => {
-      try {
-        await AsyncStorage.removeItem("detectedMotos");
-        console.log("Motos detectadas foram limpas ao iniciar o aplicativo.");
-      } catch (error) {
-        console.error("Erro ao limpar motos detectadas:", error);
-      }
-    };
-
-    clearDetectedMotos();
-  }, []);
 
   try {
     return (

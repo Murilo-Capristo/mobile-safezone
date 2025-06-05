@@ -2,13 +2,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type UsuarioType = {
-  user: string;
-};
-
 type AuthContextType = {
-  usuario: UsuarioType | null;
-  setUsuario: (usuario: UsuarioType) => void;
+  usuario: { email: string; token: string } | null;
+  setUsuario: (usuario: { email: string; token: string }) => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -17,7 +13,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [usuario, setUsuarioState] = useState<UsuarioType | null>(null);
+  const [usuario, setUsuarioState] = useState<{ email: string; token: string } | null>(null);
 
   useEffect(() => {
     const loadUsuario = async () => {
@@ -29,8 +25,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loadUsuario();
   }, []);
 
-  const setUsuario = async (newUsuario: UsuarioType) => {
+  const setUsuario = async (newUsuario: { email: string; token: string }) => {
     await AsyncStorage.setItem('usuario', JSON.stringify(newUsuario));
+    await AsyncStorage.setItem('token', newUsuario.token); // Armazenando token
     setUsuarioState(newUsuario);
   };
 

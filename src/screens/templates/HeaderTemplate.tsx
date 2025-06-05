@@ -1,7 +1,7 @@
 import { View, Text,StyleSheet,Image, TouchableOpacity } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useAuth, useUser } from '../contexts/UserContext';
+import { useAuth } from '../contexts/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const roxo = '#f900cf';
@@ -31,7 +31,7 @@ export default function HeaderTemplate() {
                                     size={30} 
                                     color={"#000"}
                                     ></Icon>
-                                    <Text style={styles.TextProfile}>{usuario?.user}</Text>
+                                    <Text style={styles.TextProfile}>{usuario?.email}</Text>
                        
                                     </TouchableOpacity>
                 <View>
@@ -94,6 +94,8 @@ const styles = StyleSheet.create({
     logo:{
         width: 120,
         height: 55,
+        position: "absolute",
+        right: 12
 
     },
 });

@@ -4,7 +4,9 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import React, { useEffect, useState } from "react"; 
-
+import { useAuth } from '../contexts/UserContext';
+import { Alerta } from "../../types/Alerta"; 
+import { format } from "date-fns";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'HomeScreen'>;
 
@@ -13,65 +15,105 @@ const laranja_escuro = '#AD5900';
 const laranja = "#FC8910";
 const laranja2 = "#ff5100";
 
-type Breed = {
-  id: string;
-  name: string;
-  maleWeightMax: number;
-  hypoallergenic: boolean;
-}
 
 
 export default function HomeScreen() {
-  const [breeds, setBreeds] = useState<Breed[]>([]);
-  const [loading, setLoading] = useState(true);
-  const navigation = useNavigation<HomeScreenNavigationProp>();
-  useEffect(() => {
-    fetch('https://dogapi.dog/api/v2/breeds')
-    .then((response) => response.json())
-    .then((json) => {
-      const parsed: Breed[] = json.data.map((breed: any) => ({
-        id: breed.id,
-        name: breed.attributes.name,
-        maleWeightMax: breed.attributes.male_weight.max,
-        hypoallergenic: breed.attributes.hypoallergenic,
-    }));
-      setBreeds(parsed);
 
-    })
-    .catch((error) => console.error("Erro ao Buscar na API", error))
-    .finally(() => setLoading(false));
-  }, []);
+  const [alertas, setAlertas] = useState<Alerta[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const { usuario } = useAuth();
+  const [hasMore, setHasMore] = useState(true);
+  const [authError, setAuthError] = useState(false);
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+  
+  const loadAlertas = async (pageNumber: number) => {
+    setLoading(true);
+    setAuthError(false);
+    try {
+      const response = await fetch(`http://52.168.182.169:8081/alertas?page=${pageNumber}&size=20`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${usuario?.token}`, // Use o token do usuário autenticado
+        },
+      });
+
+
+      const json = await response.json();
+      if (response.status === 403) {
+        setAuthError(true);
+        return;
+      }
+      if (!json.content || json.content.length === 0) {
+        setHasMore(false);
+        return;
+      }
+      else{
+      const parsed: Alerta[] = json.content.map((alerta: any) => ({
+              id: alerta.id,
+              tipo: alerta.tipo,
+              descricao: alerta.descricao,
+              dataHora: alerta.dataHora,
+            }));
+            setAlertas((prev) => [...prev, ...parsed]);
+            setHasMore(json.content.length > 0);
+          }
+    } catch (error) {
+      console.error("Erro ao buscar alertas:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    loadAlertas(page);
+  } , [page]);
+
+  const handleLoadMore = () => {
+    if (loading || !hasMore) return;
+    setPage((prev) => prev + 1);
+  }
   
   return (
-      <View style={{ flex: 1, backgroundColor: "#fff" }}>
-        <HeaderTemplate></HeaderTemplate>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+    <HeaderTemplate></HeaderTemplate>
 
-        <View style={styles.container}>
-          <View style={[{flexDirection: 'row', margin:20}]}>
-            <Text style={[styles.subtitle, { color: '#000' }]}>Últimos</Text>
-            <Text style={[styles.subtitle, { color: laranja2 }]}> Alertas</Text>
-          </View>
-
-          {loading ? (
-          <ActivityIndicator size="large" color={laranja2} />
-        ) : (
-          <FlatList
-            data={breeds}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>{item.name}</Text>
-                <Text>Peso máx. macho: {item.maleWeightMax} kg</Text>
-                <Text>
-                  Hipoalergênico: {item.hypoallergenic ? "Sim" : "Não"}
-                </Text>
-              </View>
-            )}
-          />
-        )}
-        </View>
-        
+    <View style={styles.container}>
+      <View style={[{ flexDirection: 'row', margin: 20 }]}>
+        <Text style={[styles.subtitle, { color: '#000' }]}>Últimos</Text>
+        <Text style={[styles.subtitle, { color: laranja2 }]}> Alertas</Text>
       </View>
+
+      {loading && page === 0 ? (
+  <ActivityIndicator size="large" color={laranja2} />
+) : authError ? (
+  <View style={styles.noAlertasContainer}>
+    <Text style={styles.noAlertasText}>Você não tem permissão para acessar os alertas.</Text>
+  </View>
+) : alertas.length === 0 ? (
+  <View style={styles.noAlertasContainer}>
+    <Text style={styles.noAlertasText}>Não há alertas disponíveis no momento.</Text>
+  </View>
+) : (
+  <FlatList
+    data={alertas}
+    keyExtractor={(item) => item.id.toString()}  // Certifique-se de que o ID seja único
+    renderItem={({ item }) => (
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>{item.tipo}</Text>
+        <Text>{item.descricao}</Text>
+        <Text>{format(new Date(item.dataHora), 'dd/MM/yyyy HH:mm')}</Text>
+      </View>
+    )}
+    onEndReached={handleLoadMore}
+    onEndReachedThreshold={0.5}
+    ListFooterComponent={loading && hasMore ? (
+      <ActivityIndicator size="small" color={laranja2} />
+    ) : null}
+  />
+)}
+      </View>
+    </View>
     );
  }   
         
@@ -97,8 +139,8 @@ const styles = StyleSheet.create({
       padding: 20,
       marginVertical: 10, 
       borderRadius: 10,
-      backgroundColor: "#b8b8b8", 
-      width: "100%", 
+      backgroundColor: "#d1d1d1", 
+      width: 400, 
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.2,
@@ -116,5 +158,15 @@ const styles = StyleSheet.create({
       fontWeight: "bold",
       color: "#000",
 
+    },
+    noAlertasContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    noAlertasText: {
+      fontSize: 18,
+      color: '#888',
+      textAlign: 'center',
     },
 });

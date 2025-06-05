@@ -1,14 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity} from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/Ionicons";
 import { RootStackParamList } from "../../navigation/RootNavigator";
-
+import axios from "axios";
 import { useState } from "react";
-import { useAuth, useUser } from "../contexts/UserContext";
+import { useAuth } from "../contexts/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Modal from "react-native-modal";
 
 
 const laranja_escuro = '#AD5900';
@@ -19,27 +19,68 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, '
 
 
 export default function Cadastro() {
-    
+    const [errorModalVisible, setErrorModalVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const { setUsuario } = useAuth(); 
     const [usuarioInput, setUsuarioInput] = useState('');
-    
+    const [senhaInput, setSenhaInput] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const navigation = useNavigation<LoginScreenNavigationProp>();
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword); 
+      };
 
-const handleLogin = async () => {
-  const usuario = {
-    user: usuarioInput.trim()
-  };
+    const handleLogin = async () => {
+        const usuario = {
+          email: usuarioInput.trim(), 
+          senha: senhaInput.trim(),  
+        };
 
-  if (usuario.user) {
-    await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
-    setUsuario(usuario); 
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'HomeScreen' }],
-    });
-  }
-};
+        if (!usuario.email || !usuario.senha) {
+            setErrorMessage("Por favor, preencha todos os campos.");
+            setErrorModalVisible(true);
+            setTimeout(() => {
+                setErrorModalVisible(false);
+            }, 3000);
+            return;
+        }
+          try {
+            console.log("Tentando fazer login com:", usuario);
+            const response = await axios.post("http://52.168.182.169:8081/auth/login", usuario);     
+            console.log("Response: ", response.data);    
+            const token = response.data; 
+            if (token) {
+                const usuarioData = { email: usuarioInput, token: token };
+                await AsyncStorage.setItem('token', token);
+                await AsyncStorage.setItem('usuario', JSON.stringify(usuarioData));
+                
+                console.log("Token armazenado com sucesso:", token);
+    
+                setUsuario(usuarioData);
+    
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'HomeScreen' }],
+                });
+            } else {
+                setErrorMessage("Token não encontrado na resposta.");
+                setErrorModalVisible(true);
+            }
+    
+      
+          } catch (error: any) {
+            console.error("Erro ao fazer login:", error);
+            const errorMessage = error?.response?.data?.message || "Erro ao realizar login.";
+            setErrorMessage(errorMessage);  
+            setErrorModalVisible(true);    
+      
+            setTimeout(() => {
+              setErrorModalVisible(false); 
+            }, 3000);
+        }
+      };
+      
 
 return(
     <View style={styles.container}>
@@ -78,14 +119,23 @@ return(
             </View>
                 {/* Campo senha */}
                 <View style={styles.inputContainer}>
-                <Icon name="lock-closed" size={20} color={"#606060"}></Icon>
-                <TextInput
-                placeholder="Senha"
-                placeholderTextColor="#ccc"
-                style={styles.input}
-            
-                />
-            </View>
+                    <Icon name="lock-closed" size={20} color={"#606060"} />
+                    <TextInput
+                        placeholder="Senha"
+                        placeholderTextColor="#ccc"
+                        style={styles.input}
+                        secureTextEntry={!showPassword}
+                        value={senhaInput}
+                        onChangeText={setSenhaInput} 
+                    />
+                    <TouchableOpacity onPress={togglePasswordVisibility}>
+                        <Icon
+                        name={showPassword ? "eye-off-outline" : "eye-outline"} 
+                        size={24}
+                        color={"#606060"}
+                        />
+                    </TouchableOpacity>
+                    </View>
         </View>
         <View>
             <TouchableOpacity style={[styles.button,
@@ -108,6 +158,17 @@ return(
         </TouchableOpacity>
 
         </View>
+        <Modal
+  isVisible={errorModalVisible}
+  animationIn="slideInDown"
+  animationOut="slideOutUp"
+  backdropOpacity={0}
+  style={styles.modal}
+>
+  <View style={styles.modalContainerError}>
+    <Text style={styles.modalTitle}>{errorMessage}</Text>
+  </View>
+</Modal>
         </View>
 
 
@@ -186,11 +247,30 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         left: 0,
-
-
-
-
-
-
     },
+    modal: {
+        justifyContent: "flex-start", 
+        margin: 0, 
+      },
+      modalContainerSuccess: {
+        backgroundColor: "#4CAF50",
+        padding: 10,
+        borderRadius: 5,
+        alignItems: "center",
+        marginTop: 50,
+      },
+      
+      modalContainerError: {
+        backgroundColor: "#FF4C4C",
+        padding: 10,
+        borderRadius: 5,
+        alignItems: "center",
+        marginTop: 50,
+      },
+      
+      modalTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#fff",
+      },
 })

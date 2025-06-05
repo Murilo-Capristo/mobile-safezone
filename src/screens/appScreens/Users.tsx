@@ -3,10 +3,14 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from "r
 import { Provider } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import HeaderReduzida from "../templates/HeaderReduzida";
+import HeaderTemplate from "../templates/HeaderTemplate";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/RootNavigator";
-import { Breed } from "../../types/Breed"; 
+import { Breed } from "../../types/Alerta"; 
+import { useAuth } from '../contexts/UserContext';
+
+
+
 
 type SearchScreenRouteProp = RouteProp<RootStackParamList, "SearchScreen">;
 
@@ -15,8 +19,6 @@ const laranja = "#FC8910";
 export default function SearchScreen() {
   const navigation = useNavigation();
   const route = useRoute<SearchScreenRouteProp>();
-  const { param = "motos" } = route.params || {};
-
   const [search, setSearch] = useState("");
   const [breeds, setBreeds] = useState<Breed[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +51,7 @@ export default function SearchScreen() {
 
   return (
     <Provider>
-      <HeaderReduzida />
+      <HeaderTemplate />
       <View style={styles.container}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
           <Icon name="arrow-back" size={28} color={laranja} />
