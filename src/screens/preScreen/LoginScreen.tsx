@@ -92,7 +92,10 @@ return(
                 size={30}
                 color={laranja}
                 style={{ marginTop: 30, marginLeft: 10 }}
-                onPress={() => navigation.popToTop()}/>
+                onPress={() => navigation.reset({
+    index: 0,
+    routes: [{ name: 'Landing' }],
+  })}/>
                     </TouchableOpacity>  
             </View>
             <View style={styles.logoContainer}>
