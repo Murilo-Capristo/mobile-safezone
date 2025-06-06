@@ -14,19 +14,14 @@
 ## 🚀 Como Rodar o Projeto?
 
 ### Backend
-- Clone o repositório do backend (exemplo):  
-  `git clone https://github.com/Murilo-Capristo/mobile-safezone.git`  
-- Acesse a pasta do backend:  
-  `cd safezone-backend`  
-- Rode o projeto Spring Boot (com Java 17+):  
-  `./mvnw spring-boot:run` ou pelo seu IDE favorito  
-- API disponível em: `http://localhost:8081`
-
+- Rode os comandos no arquivo Azure.txt enviado na entrega para poder detectar novos alertas
+  ` O app consegue ler os apps gravados, inicie o dispositivo IoT apenas se quiser gravar novos alertas`
+  
 ### Frontend
-- Clone o repositório do app mobile (exemplo):  
-  `git clone https://github.com/seuusuario/safezone-app.git`  
+- Clone o repositório do app mobile :  
+  `git clone https://github.com/Murilo-Capristo/mobile-safezone.git`  
 - Acesse a pasta do frontend:  
-  `cd safezone-app`  
+  `mobile-safezone`  
 - Instale dependências:  
   `npm install`  
 - Inicie o app com Expo:  
