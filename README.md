@@ -14,7 +14,8 @@
 ## 🚀 Como Rodar o Projeto?
 
 ### Backend
-- Rode os comandos no arquivo Azure.txt enviado na entrega para poder detectar novos alertas
+- Rode os comandos no arquivo Azure.txt enviado na entrega para poder detectar novos alertas:
+- 
   ` O app consegue ler os apps gravados, inicie o dispositivo IoT apenas se quiser gravar novos alertas`
   
 ### Frontend
