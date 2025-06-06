@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import HeaderTemplate from "../templates/HeaderTemplate";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from '../contexts/UserContext';
+import { Usuario } from "../../types/Usuario";
+import { Picker } from '@react-native-picker/picker';
 
-interface Usuario {
-  id: number;
-  email: string;
-  role: string;
-}
 
 const laranja = "#FC8910";
 
@@ -18,10 +16,25 @@ export default function SearchScreen() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const { usuario } = useAuth();
+  const [authError, setAuthError] = useState(false);
 
   const buscarUsuarios = async () => {
+    setLoading(true);
+    setAuthError(false);
     try {
-      const response = await fetch("http://52.168.182.169:8081/usuario");
+      const response = await fetch("http://52.168.182.169:8081/usuario", {
+      method: "GET",
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${usuario?.token}`,
+      },
+    });
+        if (response.status === 403) {
+        setAuthError(true);
+        setLoading(false);
+        return;
+      }
       const data = await response.json();
 
       const filtrados = data.filter(
@@ -49,10 +62,14 @@ export default function SearchScreen() {
   const atualizarUsuario = async (id: number, email: string, role: string) => {
     try {
       await fetch(`http://52.168.182.169:8081/usuario/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, role }),
-      });
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${usuario?.token}`,
+      },
+      body: JSON.stringify({ email, role }),
+    });
+
       buscarUsuarios();
     } catch (err) {
       console.error("Erro ao atualizar usuário:", err);
@@ -67,9 +84,12 @@ export default function SearchScreen() {
         style: "destructive",
         onPress: async () => {
           try {
-            await fetch(`http://52.168.182.169:8081/usuario/${id}`, {
-              method: "DELETE",
-            });
+              await fetch(`http://52.168.182.169:8081/usuario/${id}`, {
+                method: "DELETE",
+                headers: {
+                  "Authorization": `Bearer ${usuario?.token}`,
+                },
+              });
             buscarUsuarios();
           } catch (err) {
             console.error("Erro ao excluir usuário:", err);
@@ -86,9 +106,7 @@ export default function SearchScreen() {
   return (
     <View style={styles.container}>
       <HeaderTemplate />
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
-        <Icon name="arrow-back" size={28} color={laranja} />
-      </TouchableOpacity>
+
 
       <View style={styles.searchRow}>
         <TextInput
@@ -100,48 +118,67 @@ export default function SearchScreen() {
         <AntDesign name="search1" size={26} style={{ marginRight: 10 }} />
       </View>
 
-      <FlatList
-        data={usuariosFiltrados}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.usuarioItem}>
-            <Text>ID: {item.id}</Text>
-            <TextInput
-              style={styles.editInput}
-              value={item.email}
-              onChangeText={(text) =>
-                setUsuarios((prev) =>
-                  prev.map((u) => (u.id === item.id ? { ...u, email: text } : u))
-                )
-              }
-            />
-            <TextInput
-              style={styles.editInput}
-              value={item.role}
-              onChangeText={(text) =>
-                setUsuarios((prev) =>
-                  prev.map((u) => (u.id === item.id ? { ...u, role: text } : u))
-                )
-              }
-            />
-            <View style={styles.actions}>
-              <TouchableOpacity onPress={() => atualizarUsuario(item.id, item.email, item.role)}>
-                <AntDesign name="checkcircle" size={24} color="green" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => excluirUsuario(item.id)} style={{ marginLeft: 10 }}>
-                <AntDesign name="delete" size={24} color="red" />
-              </TouchableOpacity>
+      {loading && !authError ? (
+        <ActivityIndicator size="large" color={laranja} style={{ marginTop: 30 }} />
+      ) : authError ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Você não tem permissão para acessar os usuários.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={usuariosFiltrados}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.usuarioItem}>
+              <Text>ID: {item.id}</Text>
+              <TextInput
+                style={styles.editInput}
+                value={item.email}
+                onChangeText={(text) =>
+                  setUsuarios((prev) =>
+                    prev.map((u) => (u.id === item.id ? { ...u, email: text } : u))
+                  )
+                }
+              />
+              <View style={styles.pickerWrapper}>
+                <Picker
+                  selectedValue={item.role}
+                  onValueChange={(value) =>
+                    setUsuarios((prev) =>
+                      prev.map((u) => (u.id === item.id ? { ...u, role: value } : u))
+                    )
+                  }
+                  style={styles.picker}
+                  mode="dropdown"
+                >
+                  <Picker.Item label="Admin" value="admin" />
+                  <Picker.Item label="User" value="user" />
+                </Picker>
+              </View>
+              <View style={styles.actions}>
+               <TouchableOpacity
+                    onPress={() => {
+                      const usuarioAtual = usuarios.find((u) => u.id === item.id);
+                      if (usuarioAtual) {
+                        atualizarUsuario(usuarioAtual.id, usuarioAtual.email, usuarioAtual.role);
+                      }
+                    }}
+                  >
+                  <AntDesign name="checkcircle" size={24} color="green" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => excluirUsuario(item.id)} style={{ marginLeft: 10 }}>
+                  <AntDesign name="delete" size={24} color="red" />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-      />
+          )}
+        />
+      )}
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-  voltarBtn: { position: "absolute", top: 10, left: 10, zIndex: 1 },
   searchRow: {
     flexDirection: "row",
     borderWidth: 1,
@@ -173,4 +210,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 6,
   },
+    errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    fontSize: 18,
+    color: "#888",
+    textAlign: "center",
+  },
+  pickerWrapper: {
+  backgroundColor: "#fff",
+  borderWidth: 1,
+  borderColor: "#ccc",
+  borderRadius: 6,
+  marginVertical: 4,
+},
+picker: {
+  height: 50,
+  width: "100%",
+},
+
 });
