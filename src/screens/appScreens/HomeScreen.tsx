@@ -105,7 +105,7 @@ export default function HomeScreen() {
     const interval = setInterval(() => {
       setPage(0);
       setHasMore(true);
-    }, 10000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, []);
