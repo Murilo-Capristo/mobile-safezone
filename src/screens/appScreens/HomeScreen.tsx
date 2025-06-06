@@ -32,12 +32,12 @@ export default function HomeScreen() {
       const response = await fetch(`http://52.168.182.169:8081/alertas?page=${pageNumber}&size=20`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${usuario?.token}`,
         },
       });
 
-      if (response.status === 403) {
+      if (response.status === 403 || response.status === 401) {
         setAuthError(true);
         setLoading(false);
         return;

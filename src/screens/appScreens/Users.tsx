@@ -46,6 +46,7 @@ export default function SearchScreen() {
           id: u.id,
           email: u.email,
           role: u.role,
+          senha: u.senha, 
         }))
       );
     } catch (error) {
@@ -59,7 +60,7 @@ export default function SearchScreen() {
     buscarUsuarios();
   }, []);
 
-  const atualizarUsuario = async (id: number, email: string, role: string) => {
+  const atualizarUsuario = async (id: number, email: string, role: string, senha: string) => {
     try {
       await fetch(`http://52.168.182.169:8081/usuario/${id}`, {
       method: "PUT",
@@ -67,7 +68,7 @@ export default function SearchScreen() {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${usuario?.token}`,
       },
-      body: JSON.stringify({ email, role }),
+      body: JSON.stringify({ email, role, senha }),
     });
 
       buscarUsuarios();
@@ -140,6 +141,16 @@ export default function SearchScreen() {
                   )
                 }
               />
+              <TextInput
+                style={styles.editInput}
+                placeholder="Digite a senha atual ou uma nova"
+                secureTextEntry
+                onChangeText={(text) =>
+                  setUsuarios((prev) =>
+                    prev.map((u) => (u.id === item.id ? { ...u, senha: text } : u))
+                  )
+                }
+              />  
               <View style={styles.pickerWrapper}>
                 <Picker
                   selectedValue={item.role}
@@ -151,8 +162,8 @@ export default function SearchScreen() {
                   style={styles.picker}
                   mode="dropdown"
                 >
-                  <Picker.Item label="Admin" value="admin" />
-                  <Picker.Item label="User" value="user" />
+                  <Picker.Item label="Admin" value="ADMIN" />
+                  <Picker.Item label="User" value="USER" />
                 </Picker>
               </View>
               <View style={styles.actions}>
@@ -160,7 +171,12 @@ export default function SearchScreen() {
                     onPress={() => {
                       const usuarioAtual = usuarios.find((u) => u.id === item.id);
                       if (usuarioAtual) {
-                        atualizarUsuario(usuarioAtual.id, usuarioAtual.email, usuarioAtual.role);
+                        atualizarUsuario(
+                          usuarioAtual.id,
+                          usuarioAtual.email, 
+                          usuarioAtual.role,
+                          usuarioAtual.senha
+                        );
                       }
                     }}
                   >
