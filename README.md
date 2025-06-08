@@ -46,6 +46,7 @@ Execute os comandos listados no arquivo `azure.txt` (fornecido na entrega) para 
   `npx expo start`  
 - Abra no seu emulador ou dispositivo físico pelo QR code gerado
 
+### Atenção! Se os alertas não carregarem automaticamente, deslogue do seu usuário clicando no icone e seu email no canto superior esquerdo e logue novamente.
 ---
 
 ## 📱 Frontend (App Mobile)
