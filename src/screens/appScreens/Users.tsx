@@ -38,7 +38,7 @@ export default function SearchScreen() {
       const data = await response.json();
 
       const filtrados = data.filter(
-        (u: any) => u.email.toLowerCase() !== "murilocapristo"
+        (u: any) => u.email.toLowerCase() !== "murilocapristo@gmail.com"
       );
 
       setUsuarios(
