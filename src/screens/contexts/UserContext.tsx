@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const setUsuario = async (newUsuario: { email: string; token: string }) => {
     await AsyncStorage.setItem('usuario', JSON.stringify(newUsuario));
-    await AsyncStorage.setItem('token', newUsuario.token); // Armazenando token
+    await AsyncStorage.setItem('token', newUsuario.token);
     setUsuarioState(newUsuario);
   };
 

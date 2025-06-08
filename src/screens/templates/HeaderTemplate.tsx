@@ -31,7 +31,7 @@ export default function HeaderTemplate() {
                                     size={30} 
                                     color={"#000"}
                                     ></Icon>
-                                    <Text style={styles.TextProfile}>{usuario?.email}</Text>
+                                    <Text style={styles.TextProfile}>{usuario?.email.split('@')[0]}</Text>
                        
                                     </TouchableOpacity>
                 <View>
