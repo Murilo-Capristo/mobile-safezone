@@ -13,12 +13,29 @@
 
 ## 🚀 Como Rodar o Projeto?
 
-### Backend
-- Rode os comandos no arquivo Azure.txt enviado na entrega para poder detectar novos alertas:
-- 
-  ` O app consegue ler os apps gravados, inicie o dispositivo IoT apenas se quiser gravar novos alertas`
+# Passos IoT Opcionais*
+### 📦 1. Clone o repositório IoT se quiser Gravar Alertas
+
+```bash
+git clone https://github.com/Murilo-Capristo/iot-safezone.git
+cd iot-safezone
+```
+
+---
+### 🖥️ 1. Acesse a VM no Azure
+
+Execute os comandos listados no arquivo `azure.txt` (fornecido na entrega) para iniciar a máquina virtual com:
+
+- Mosquitto (broker MQTT)
+- Node-RED
+
+> A VM será responsável por receber dados do ESP32 e repassar ao backend.
+
+---
+
+# Passos Obrigatórios Mobile*
   
-### Frontend
+### 📲 2. Frontend
 - Clone o repositório do app mobile :  
   `git clone https://github.com/Murilo-Capristo/mobile-safezone.git`  
 - Acesse a pasta do frontend:  
